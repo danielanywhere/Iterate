@@ -94,12 +94,12 @@ namespace Iterate {
         ///Syntax:
         ///iterate /folder:{FolderPath} [/filemask:{FileMask}] [/recurse:{True|False}]
         ///        [/variables:[{{Var1Name}:{Var1Value}},...,{{VarNName}:{VarNValue}}]]
-        ///        /commands:[{Command1},{Command2},...{Commandn}][/wait][/?]
+        ///        /commands:[{Command1},{Command2},...{Commandn}]
+        ///        [/log:{LogFilename}][/wait][/?]
         ///
         ///        {FolderPath}    - Pathname of the starting folder.
         ///        {FileMask}      - Mask to match on filenames.
-        ///
-        ///        /recurse        - Value indicating whether to recurse folders. [rest of string was truncated]&quot;;.
+        ///        {LogFilename}   - Filename of the  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Syntax {
             get {
