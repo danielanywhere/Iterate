@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Name="Iterate" Language="1033"
+										Version="1.0.2.0905" Manufacturer="Daniel Patterson, MCSD (danielanywhere)" Id="*"
+										UpgradeCode="5e9e56aa-7d93-42e7-abd8-7c0f26a48010">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate />
+
+		<Feature Id="Application" Title="Iterate Setup" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+		</Feature>
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLFOLDER" Name="Iterate" />
+			</Directory>
+		</Directory>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+			<Component Id="ProductComponent"> 
+				<File Source="$(var.Iterate.TargetPath)" />
+				<Environment Id="IteratePath" Name="PATH" Action="set" Permanent="no" System="yes"
+																	Part="last" Value="[INSTALLFOLDER]" />
+		 </Component> 
+		</ComponentGroup>
+	</Fragment>
+</Wix>
