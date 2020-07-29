@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+* Product.wxs
+* Copyright(c) 2020. Daniel Patterson, MCSD (danielanywhere)
+* This file is licensed under GNU General Public License version 3.
+* https://opensource.org/licenses/gpl-3.0.html
+* Please see the LICENSE file in this project.
+-->
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	<Product Name="Iterate" Language="1033"
 										Version="1.0.2.0905" Manufacturer="Daniel Patterson, MCSD (danielanywhere)" Id="*"

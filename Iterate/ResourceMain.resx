@@ -192,4 +192,14 @@ iterate /log:C:\Temp\IterateLog.txt "/folder:C:\Users\{Username}\Documents\GitHu
     <value>(?&lt;f&gt;\{(?&lt;n&gt;[^\}]+)\})</value>
     <comment>Regular expression pattern for reading variable names from a string template.</comment>
   </data>
+  <data name="CopyrightNotice" xml:space="preserve">
+    <value>/*
+ * ResourceMain
+ * Copyright(c) 2020. Daniel Patterson, MCSD (danielanywhere)
+ * This file is licensed under GNU General Public License version 3.
+ * https://opensource.org/licenses/gpl-3.0.html
+ * Please see the LICENSE file in this project.
+ */</value>
+    <comment>Copyright notice and license.</comment>
+  </data>
 </root>

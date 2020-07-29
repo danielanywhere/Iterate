@@ -15,7 +15,7 @@ indent_style = tab
 indent_size = 2
 trim_trailing_whitespace = true
 
-[*.{xml,html,css,wxs}]
+[*.{xml,html,css,wxs,config}]
 charset = utf-8
 indent_style = tab
 indent_size = 1

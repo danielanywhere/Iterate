@@ -61,6 +61,21 @@ namespace Iterate {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /*
+        /// * ResourceMain
+        /// * Copyright(c) 2020. Daniel Patterson, MCSD (danielanywhere)
+        /// * This file is licensed under GNU General Public License version 3.
+        /// * https://opensource.org/licenses/gpl-3.0.html
+        /// * Please see the LICENSE file in this project.
+        /// */.
+        /// </summary>
+        internal static string CopyrightNotice {
+            get {
+                return ResourceManager.GetString("CopyrightNotice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to (?&lt;r&gt;&apos;(?&lt;v&gt;[^&apos;]*)&apos;).
         /// </summary>
         internal static string rxCommands {
