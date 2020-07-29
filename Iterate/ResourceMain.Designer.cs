@@ -85,6 +85,15 @@ namespace Iterate {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (?&lt;r&gt;&apos;(?&lt;v&gt;[^&apos;]*)&apos;).
+        /// </summary>
+        internal static string rxExcludeDirs {
+            get {
+                return ResourceManager.GetString("rxExcludeDirs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to (?&lt;f&gt;\{(?&lt;n&gt;[^\}]+)\}).
         /// </summary>
         internal static string rxVariableNames {
@@ -109,12 +118,12 @@ namespace Iterate {
         ///Syntax:
         ///iterate /folder:{FolderPath} [/filemask:{FileMask}] [/recurse:{True|False}]
         ///        [/variables:[{{Var1Name}:{Var1Value}},...,{{VarNName}:{VarNValue}}]]
-        ///        /commands:[{Command1},{Command2},...{Commandn}]
+        ///        /commands:[{Command1},{Command2},...,{Commandn}]
+        ///        [/excludedir:[{PathPattern1},...,{PathPatternn}]]
         ///        [/log:{LogFilename}][/wait][/?]
         ///
         ///        {FolderPath}    - Pathname of the starting folder.
-        ///        {FileMask}      - Mask to match on filenames.
-        ///        {LogFilename}   - Filename of the  [rest of string was truncated]&quot;;.
+        ///        {FileMask}      - Mask to mat [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Syntax {
             get {

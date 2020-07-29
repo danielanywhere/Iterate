@@ -4,12 +4,14 @@ matching item.
 Syntax:
 iterate /folder:{FolderPath} [/filemask:{FileMask}] [/recurse:{True|False}]
         [/variables:[{{Var1Name}:{Var1Value}},...,{{VarNName}:{VarNValue}}]]
-        /commands:[{Command1},{Command2},...{Commandn}]
+        /commands:[{Command1},{Command2},...,{Commandn}]
+        [/excludedir:[{PathPattern1},...,{PathPatternn}]]
         [/log:{LogFilename}][/wait][/?]
 
         {FolderPath}    - Pathname of the starting folder.
         {FileMask}      - Mask to match on filenames.
         {LogFilename}   - Filename of the text log to generate.
+        {PathPattern}  - Portion of a directory name.
 
         /log            - Create a log file containing the output of
                           the commands.
@@ -18,6 +20,9 @@ iterate /folder:{FolderPath} [/filemask:{FileMask}] [/recurse:{True|False}]
         /variables      - JSON array of variables to insert in commands.
         /commands       - JSON string array of individual commands to
                           run in sequence.
+        /excludedir     - Patterns in the path to exclude when recursing
+                          through folders. Each value can be anything from
+                          a portion of a folder name to a complete path.
         /wait           - Wait for user keypress after application finishes.
         /?              - Display this help message.
 
@@ -57,5 +62,5 @@ The following variable names are built in.
 
 
 Examples:
-iterate /log:C:\Temp\IterateLog.txt "/folder:C:\Users\{Username}\Documents\GitHub\Scaffold\Docs\Reference\pendev\pendev" /filemask:*.js /recurse:true "/variables:[{'VarEFExe':'C:\Users\{Username}\Documents\Visual Studio 2015\Projects\EnsureFolder\EnsureFolder\bin\Debug\EnsureFolder.exe'},{'VarCM0Exe':'C:\Users\{Username}\Documents\Visual Studio 2017\Projects\CodeMapper0\CodeMapper0\bin\Debug\CodeMapper0.exe'}]" "/commands:['^{VarEFExe}^ ^C:\Users\{Username}\Documents\GitHub\Scaffold\Docs\Reference\pendoc\{RelativeFolderName}^','^{VarEFExe}^ ^C:\Users\{Username}\Documents\GitHub\Scaffold\Docs\Reference\pendoc\CallSource\{RelativeFolderName}^','esprima-cli ^/input:{FullFilename}^ ^/output:C:\Users\{Username}\Documents\GitHub\Scaffold\Docs\Reference\pendoc\{RelativeFolderName}\{FilenameOnly}-js.json^','^{VarCM0Exe}^ /mode:syntax /format:json ^/input:C:\Users\{Username}\Documents\GitHub\Scaffold\Docs\Reference\pendoc\{RelativeFolderName}\{FilenameOnly}-js.json^ ^/output:C:\Users\{Username}\Documents\GitHub\Scaffold\Docs\Reference\pendoc\CallSource\{RelativeFolderName}\{FilenameOnly}-js.json^']" /wait
+iterate /log:C:\Temp\IterateLog.txt "/excludedir:['node_modules','app\views\tools\FontDetailDialog.js']" "/folder:C:\Users\{Username}\Documents\GitHub\Scaffold\Docs\Reference\pendev\pendev" /filemask:*.js /recurse:true "/variables:[{'VarEFExe':'C:\Users\{Username}\Documents\Visual Studio 2015\Projects\EnsureFolder\EnsureFolder\bin\Debug\EnsureFolder.exe'},{'VarCM0Exe':'C:\Users\{Username}\Documents\Visual Studio 2017\Projects\CodeMapper0\CodeMapper0\bin\Debug\CodeMapper0.exe'}]" "/commands:['^{VarEFExe}^ ^C:\Users\{Username}\Documents\GitHub\Scaffold\Docs\Reference\pendoc\{RelativeFolderName}^','^{VarEFExe}^ ^C:\Users\{Username}\Documents\GitHub\Scaffold\Docs\Reference\pendoc\CallSource\{RelativeFolderName}^','esprima-cli ^/input:{FullFilename}^ ^/output:C:\Users\{Username}\Documents\GitHub\Scaffold\Docs\Reference\pendoc\{RelativeFolderName}\{FilenameOnly}-js.json^','^{VarCM0Exe}^ /mode:syntax /format:json ^/input:C:\Users\{Username}\Documents\GitHub\Scaffold\Docs\Reference\pendoc\{RelativeFolderName}\{FilenameOnly}-js.json^ ^/output:C:\Users\{Username}\Documents\GitHub\Scaffold\Docs\Reference\pendoc\CallSource\{RelativeFolderName}\{FilenameOnly}-js.json^']" /wait
 

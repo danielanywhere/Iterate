@@ -40,46 +40,79 @@ namespace Iterate
 		{
 			DirectoryInfo[] directories = null;
 			FileInfo[] files = null;
+			string fullName = "";
 			string relDir = "";
+			bool skip = false;
 			string value = "";
 
 			if(mDirectory != null)
 			{
-				//	Get the relative directory.
-				if(mDirectory.FullName.Length != mStartFolderName.Length)
+				fullName = mDirectory.FullName;
+				//	Check to see if this directory should be skipped.
+				value = fullName.Replace(@"\", "/").ToLower();
+				foreach(string dirExclude in mExcludedDirectories)
 				{
-					relDir = GetRelativeDirectory(mStartFolderName, mDirectory.FullName);
-					mVariables.Set("RelativeFolderName", relDir);
-				}
-				Console.WriteLine($"Directory: {relDir}");
-				//	Get the list of files for the current folder.
-				files = mDirectory.GetFiles(mFileMask);
-				value = mDirectory.FullName;
-				if(value.EndsWith(@"\") || value.EndsWith("/"))
-				{
-					value = value.Substring(0, value.Length - 1);
-				}
-				mVariables.Set("FullFoldername", value);
-				foreach(FileInfo file in files)
-				{
-					//	Each matching file.
-					mIndex++;
-					mVariables.Set("Index", mIndex.ToString());
-					mVariables.Set("Extension", file.Extension);
-					mVariables.Set("Filename", file.Name);
-					mVariables.Set("FilenameOnly", GetFilenameOnly(file));
-					mVariables.Set("FullFilename", file.FullName);
-					Console.WriteLine($" {file.Name}");
-					RunCommands();
-				}
-				//	Process sub-directories.
-				if(mRecurse)
-				{
-					directories = mDirectory.GetDirectories();
-					foreach(DirectoryInfo directory in directories)
+					if(value.IndexOf(dirExclude.Replace(@"\", "/").ToLower()) > -1)
 					{
-						mDirectory = directory;
-						ProcessDirectories();
+						Console.WriteLine($"Skip: {fullName}");
+						skip = true;
+						break;
+					}
+				}
+				if(!skip)
+				{
+					//	Get the relative directory.
+					if(fullName.Length != mStartFolderName.Length)
+					{
+						relDir =
+							GetRelativeDirectory(mStartFolderName, mDirectory.FullName);
+						mVariables.Set("RelativeFolderName", relDir);
+					}
+					Console.WriteLine($"Directory: {relDir}");
+					//	Get the list of files for the current folder.
+					files = mDirectory.GetFiles(mFileMask);
+					value = mDirectory.FullName;
+					if(value.EndsWith(@"\") || value.EndsWith("/"))
+					{
+						value = value.Substring(0, value.Length - 1);
+					}
+					mVariables.Set("FullFoldername", value);
+					foreach(FileInfo file in files)
+					{
+						//	Each matching file.
+						skip = false;
+						fullName = file.FullName;
+						value = fullName.Replace(@"\", "/").ToLower();
+						foreach(string dirExclude in mExcludedDirectories)
+						{
+							if(value.IndexOf(dirExclude.Replace(@"\", "/").ToLower()) > -1)
+							{
+								Console.WriteLine($"Skip: {fullName}");
+								skip = true;
+								break;
+							}
+						}
+						if(!skip)
+						{
+							mIndex++;
+							mVariables.Set("Index", mIndex.ToString());
+							mVariables.Set("Extension", file.Extension);
+							mVariables.Set("Filename", file.Name);
+							mVariables.Set("FilenameOnly", GetFilenameOnly(file));
+							mVariables.Set("FullFilename", file.FullName);
+							Console.WriteLine($" {file.Name}");
+							RunCommands();
+						}
+					}
+					//	Process sub-directories.
+					if(mRecurse)
+					{
+						directories = mDirectory.GetDirectories();
+						foreach(DirectoryInfo directory in directories)
+						{
+							mDirectory = directory;
+							ProcessDirectories();
+						}
 					}
 				}
 			}
@@ -98,6 +131,11 @@ namespace Iterate
 			string content = "";
 			ProcessStartInfo process = null;
 
+			if(mCommands.Count > 0)
+			{
+				File.AppendAllText(mLogFilename,
+						DateTime.Now.ToString("yyyyMMdd.HHmmss") + "\r\n");
+			}
 			foreach(string commandValue in mCommands)
 			{
 				content = ReplaceVariables(commandValue, mVariables);
@@ -119,8 +157,7 @@ namespace Iterate
 				command.WaitForExit();
 				if(mLogFilename?.Length > 0)
 				{
-					File.AppendAllText(mLogFilename,
-						DateTime.Now.ToString("yyyyMMdd.HHmmss") + "\r\n" +content);
+					File.AppendAllText(mLogFilename, content);
 				}
 			}
 		}
@@ -170,7 +207,22 @@ namespace Iterate
 						value = GetValue(match, "v");
 						if(value?.Length > 0)
 						{
-							prg.Commands.Add(value);
+							prg.mCommands.Add(value);
+						}
+					}
+					continue;
+				}
+				key = "/excludedir:";
+				if(lowerArg.StartsWith(key))
+				{
+					content = arg.Substring(key.Length).Replace('^', '"');
+					matches = Regex.Matches(content, ResourceMain.rxExcludeDirs);
+					foreach(Match match in matches)
+					{
+						value = GetValue(match, "v");
+						if(value?.Length > 0)
+						{
+							prg.mExcludedDirectories.Add(value);
 						}
 					}
 					continue;
@@ -188,7 +240,7 @@ namespace Iterate
 				key = "/folder:";
 				if(lowerArg.StartsWith(key))
 				{
-					prg.StartFolderName = arg.Substring(key.Length);
+					prg.mStartFolderName = arg.Substring(key.Length);
 					continue;
 				}
 				key = "/log:";
@@ -200,7 +252,7 @@ namespace Iterate
 				key = "/recurse:";
 				if(lowerArg.StartsWith(key))
 				{
-					prg.Recurse = "1yestrue".Contains(lowerArg.Substring(key.Length));
+					prg.mRecurse = "1yestrue".Contains(lowerArg.Substring(key.Length));
 					continue;
 				}
 				key = "/variables:";
@@ -237,6 +289,11 @@ namespace Iterate
 			{
 				prg.mStartFolderName =
 					prg.mStartFolderName.Substring(0, prg.mStartFolderName.Length - 1);
+			}
+			if(prg.mCommands.Count == 0)
+			{
+				Console.WriteLine("No commands were specified.");
+				bShowHelp = true;
 			}
 			if(bShowHelp)
 			{
@@ -280,6 +337,19 @@ namespace Iterate
 		{
 			get { return mDirectory; }
 			set { mDirectory = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	ExcludedDirectories																										*
+		//*-----------------------------------------------------------------------*
+		private List<string> mExcludedDirectories = new List<string>();
+		/// <summary>
+		/// Get a reference to the collection of excluded directories.
+		/// </summary>
+		public List<string> ExcludedDirectories
+		{
+			get { return mExcludedDirectories; }
 		}
 		//*-----------------------------------------------------------------------*
 
